@@ -1104,6 +1104,26 @@ window.mercSubmit = function() {
     return;
   }
 
+  // ── Validate email ───────────────────────────────────────────────────────
+  const emailEl = document.querySelector('input[type="email"]');
+  const emailVal = emailEl ? emailEl.value.trim() : '';
+  if (!emailVal) {
+    if (emailEl) {
+      emailEl.style.borderColor = '#f87171';
+      emailEl.style.boxShadow = '0 0 0 3px rgba(248,113,113,0.2)';
+      emailEl.placeholder = 'Email is required';
+      emailEl.scrollIntoView({behavior:'smooth', block:'center'});
+      emailEl.focus();
+      emailEl.addEventListener('input', function fix() {
+        emailEl.style.borderColor = '';
+        emailEl.style.boxShadow = '';
+        emailEl.placeholder = 'you@company.co.za';
+        emailEl.removeEventListener('input', fix);
+      });
+    }
+    return;
+  }
+
   // ── Helper: get input value by placeholder or id ─────────────────────────
   function gv(selector) {
     const el = document.querySelector(selector);
