@@ -1222,14 +1222,23 @@ window.mercSubmit = async function() {
   // ── Capture form as image ─────────────────────────────────────────────────
   try {
     const formEl = document.querySelector('.merc-wrap');
-    const canvas = await html2canvas(formEl, {
-      scale: 1.2,
+    const rawCanvas = await html2canvas(formEl, {
+      scale: 0.6,
       useCORS: true,
       allowTaint: true,
       logging: false,
       backgroundColor: '#f4f7fb'
     });
-    const imgDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+
+    // Resize canvas to max 600px wide to keep payload small
+    const maxW = 600;
+    const ratio = Math.min(1, maxW / rawCanvas.width);
+    const outCanvas = document.createElement('canvas');
+    outCanvas.width  = Math.round(rawCanvas.width  * ratio);
+    outCanvas.height = Math.round(rawCanvas.height * ratio);
+    outCanvas.getContext('2d').drawImage(rawCanvas, 0, 0, outCanvas.width, outCanvas.height);
+
+    const imgDataUrl = outCanvas.toDataURL('image/jpeg', 0.3);
     params.form_screenshot = `<img src="${imgDataUrl}" style="max-width:100%;display:block;border:1px solid #ddd;">`;
 
     if (btn) btn.textContent = '⏳ Sending...';
