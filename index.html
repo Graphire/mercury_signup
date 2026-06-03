@@ -1188,13 +1188,24 @@ window.mercSubmit = async function() {
   // ── Generate PDF of completed form ────────────────────────────────────────
   let pdfDataUri = null;
   try {
+    window.scrollTo(0, 0);
+    const formEl = document.querySelector('.merc-wrap');
     pdfDataUri = await html2pdf().set({
-      margin: [8, 8, 8, 8],
+      margin: [10, 10, 10, 10],
       filename: 'mercury_agreement.pdf',
-      image: { type: 'jpeg', quality: 0.92 },
-      html2canvas: { scale: 1.5, useCORS: true, allowTaint: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }).from(document.querySelector('.merc-wrap')).outputPdf('datauristring');
+      image: { type: 'jpeg', quality: 0.88 },
+      html2canvas: {
+        scale: 1.2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: formEl.scrollWidth
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] }
+    }).from(formEl).outputPdf('datauristring');
   } catch(pdfErr) {
     console.warn('PDF generation failed:', pdfErr);
   }
