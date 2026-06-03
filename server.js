@@ -47,7 +47,7 @@ app.post('/send', async (req, res) => {
     }
 
     await resend.emails.send({
-      from: process.env.FROM_EMAIL || 'Mercury Agreements <onboarding@resend.dev>',
+      from: process.env.FROM_EMAIL || 'noreply@signup.mercury.net.za',
       to: process.env.TO_EMAIL || 'daniel@mercury.net.za',
       subject: `Signed Mercury Agreement - ${data.firstName||''} ${data.lastName||''}`.trim(),
       html,
