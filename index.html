@@ -356,7 +356,132 @@
   .merc-nc-grid { grid-template-columns: 1fr; }
   .merc-card-body { padding: 14px; }
 }
+
+/* ── ID / PASSPORT CAPTURE ── */
+.merc-id-section { display: flex; flex-direction: column; gap: 18px; }
+.merc-id-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+.merc-id-tab {
+  flex: 1; min-width: 130px; border: 2px solid var(--merc-border);
+  border-radius: 9px; padding: 14px 12px; cursor: pointer;
+  transition: border-color 0.18s, background 0.18s; position: relative; text-align: center;
+}
+.merc-id-tab input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+.merc-id-tab:has(input:checked) { border-color: var(--merc-accent); background: #e8f5fe; }
+.merc-id-tab-icon { font-size: 1.5rem; margin-bottom: 5px; }
+.merc-id-tab-name { font-weight: 700; font-size: 0.84rem; color: var(--merc-navy); }
+.merc-id-tab:has(input:checked) .merc-id-tab-name { color: var(--merc-accent); }
+
+.merc-id-capture-area {
+  border: 2px dashed var(--merc-border); border-radius: 12px;
+  overflow: hidden; background: var(--merc-light); position: relative;
+  min-height: 180px;
+}
+.merc-id-capture-area.has-image { border-style: solid; border-color: var(--merc-accent); }
+
+.merc-id-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 32px 20px; gap: 10px; min-height: 180px;
+}
+.merc-id-placeholder-icon { font-size: 2.5rem; opacity: 0.4; }
+.merc-id-placeholder-text { font-size: 0.82rem; color: var(--merc-muted); text-align: center; line-height: 1.5; }
+
+.merc-id-preview {
+  display: none; position: relative;
+}
+.merc-id-preview.show { display: block; }
+.merc-id-preview img {
+  width: 100%; max-height: 280px; object-fit: contain;
+  display: block; background: #000;
+}
+.merc-id-preview-bar {
+  position: absolute; top: 10px; right: 10px; display: flex; gap: 8px;
+}
+
+/* Camera viewfinder */
+.merc-id-camera { display: none; position: relative; background: #000; }
+.merc-id-camera.show { display: block; }
+.merc-id-camera video {
+  width: 100%; max-height: 300px; object-fit: cover; display: block;
+}
+.merc-id-viewfinder {
+  position: absolute; inset: 0; pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+}
+.merc-id-frame {
+  width: 80%; max-width: 480px; height: 65%;
+  border: 2px solid rgba(46,156,219,0.8);
+  border-radius: 8px; position: relative;
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.45);
+}
+.merc-id-frame::before, .merc-id-frame::after {
+  content: ''; position: absolute;
+  width: 22px; height: 22px;
+  border-color: var(--merc-accent); border-style: solid; border-width: 0;
+}
+.merc-id-frame::before { top: -2px; left: -2px; border-top-width: 3px; border-left-width: 3px; border-radius: 4px 0 0 0; }
+.merc-id-frame::after  { bottom: -2px; right: -2px; border-bottom-width: 3px; border-right-width: 3px; border-radius: 0 0 4px 0; }
+.merc-id-camera-hint {
+  position: absolute; bottom: 14px; left: 0; right: 0; text-align: center;
+  font-size: 0.75rem; color: rgba(255,255,255,0.7); pointer-events: none;
+}
+.merc-id-camera-btns {
+  position: absolute; bottom: 42px; left: 0; right: 0;
+  display: flex; justify-content: center; gap: 14px;
+}
+.merc-id-shutter {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: var(--merc-accent); border: 3px solid white;
+  cursor: pointer; font-size: 1.4rem; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(46,156,219,0.5);
+  transition: transform 0.12s, background 0.12s;
+}
+.merc-id-shutter:hover { transform: scale(1.08); background: #1e87c4; }
+.merc-id-cam-cancel {
+  background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.3);
+  color: white; padding: 10px 18px; border-radius: 8px;
+  font-size: 0.8rem; cursor: pointer; align-self: center;
+}
+
+.merc-id-action-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.merc-id-btn {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--merc-navy); color: white;
+  padding: 10px 18px; border-radius: 9px; border: none; cursor: pointer;
+  font-family: inherit; font-size: 0.84rem; font-weight: 600;
+  transition: background 0.15s, transform 0.12s;
+}
+.merc-id-btn:hover { background: var(--merc-accent); transform: translateY(-1px); }
+.merc-id-btn.secondary {
+  background: none; color: var(--merc-muted);
+  border: 1.5px solid var(--merc-border);
+}
+.merc-id-btn.secondary:hover { border-color: var(--merc-accent); color: var(--merc-accent); background: none; }
+.merc-id-btn.danger { background: #dc2626; }
+.merc-id-btn.danger:hover { background: #b91c1c; }
+
+.merc-id-quality {
+  background: var(--merc-light); border: 1px solid var(--merc-border);
+  border-radius: 9px; padding: 12px 14px;
+  font-size: 0.78rem; color: var(--merc-muted); line-height: 1.55;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.merc-id-status {
+  margin-top: 8px; padding: 9px 14px; border-radius: 8px;
+  font-size: 0.8rem; font-weight: 600; display: none;
+}
+.merc-id-status.ok { display: flex; gap: 8px; background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+.merc-id-status.warn { display: flex; gap: 8px; background: #fff7ed; color: #9a3412; border: 1px solid #fdba74; }
+
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // EmailJS initialised once DOM ready
+  (function(){
+    if(typeof emailjs !== 'undefined'){
+      emailjs.init({ publicKey: 'k_FWrndjlpO5QnFB6' });
+    }
+  })();
+</script>
 
 <div class="merc-wrap">
 
@@ -400,6 +525,98 @@
           <div class="merc-field"><label>Contact Number</label><input type="tel" placeholder="+27 (0) 82 000 0000"></div>
           <div class="merc-field merc-full"><label>Site Name &amp; Full Address</label><textarea placeholder="Building name, street address, suburb, city, postal code"></textarea></div>
         </div>
+      </div>
+    </div>
+
+
+    <!-- ID / Passport Capture -->
+    <div class="merc-card">
+      <div class="merc-card-header"><div class="merc-step-num">★</div><h4>Identity Document / Passport</h4></div>
+      <div class="merc-card-body">
+        <p style="font-size:0.82rem;color:var(--merc-muted);margin-bottom:16px;">
+          Take a photo of your ID book, Smart ID card, or passport using your camera, or upload an existing image. Ensure all text is clearly legible.
+        </p>
+
+        <!-- Doc type tabs -->
+        <div class="merc-id-tabs" style="margin-bottom:16px;">
+          <label class="merc-id-tab">
+            <input type="radio" name="merc-id-type" value="id_book" checked onchange="mercIdTypeChange()">
+            <div class="merc-id-tab-icon">📗</div>
+            <div class="merc-id-tab-name">SA ID Book</div>
+          </label>
+          <label class="merc-id-tab">
+            <input type="radio" name="merc-id-type" value="smart_id" onchange="mercIdTypeChange()">
+            <div class="merc-id-tab-icon">💳</div>
+            <div class="merc-id-tab-name">Smart ID Card</div>
+          </label>
+          <label class="merc-id-tab">
+            <input type="radio" name="merc-id-type" value="passport" onchange="mercIdTypeChange()">
+            <div class="merc-id-tab-icon">📘</div>
+            <div class="merc-id-tab-name">Passport</div>
+          </label>
+          <label class="merc-id-tab">
+            <input type="radio" name="merc-id-type" value="other" onchange="mercIdTypeChange()">
+            <div class="merc-id-tab-icon">📄</div>
+            <div class="merc-id-tab-name">Other</div>
+          </label>
+        </div>
+
+        <!-- Capture area -->
+        <div class="merc-id-capture-area" id="merc-id-area">
+
+          <!-- Placeholder (shown when no image) -->
+          <div class="merc-id-placeholder" id="merc-id-placeholder">
+            <div class="merc-id-placeholder-icon">🪪</div>
+            <div class="merc-id-placeholder-text" id="merc-id-placeholder-text">
+              Place your <strong>SA ID Book</strong> on a flat surface in good light,<br>then tap a button below to capture or upload.
+            </div>
+          </div>
+
+          <!-- Camera viewfinder -->
+          <div class="merc-id-camera" id="merc-id-camera">
+            <video id="merc-id-video" autoplay playsinline muted></video>
+            <div class="merc-id-viewfinder">
+              <div class="merc-id-frame"></div>
+            </div>
+            <div class="merc-id-camera-hint">Align document inside the frame</div>
+            <div class="merc-id-camera-btns">
+              <button class="merc-id-shutter" onclick="mercIdCapture()" title="Take Photo">📸</button>
+              <button class="merc-id-cam-cancel" onclick="mercIdStopCamera()">Cancel</button>
+            </div>
+          </div>
+
+          <!-- Preview -->
+          <div class="merc-id-preview" id="merc-id-preview">
+            <img id="merc-id-img" src="" alt="ID Document">
+            <div class="merc-id-preview-bar">
+              <button class="merc-id-btn danger" onclick="mercIdClear()" style="padding:7px 12px;font-size:0.75rem;">✕ Remove</button>
+            </div>
+          </div>
+
+        </div><!-- /capture-area -->
+
+        <!-- Hidden canvas for capture -->
+        <canvas id="merc-id-canvas" style="display:none;"></canvas>
+        <!-- Hidden file input -->
+        <input type="file" id="merc-id-file-input" accept="image/*" capture="environment" style="display:none;" onchange="mercIdFileSelected(event)">
+
+        <!-- Status -->
+        <div class="merc-id-status ok" id="merc-id-status-ok">✓ Document image attached — looks good!</div>
+        <div class="merc-id-status warn" id="merc-id-status-warn">⚠ Please ensure the document is fully visible and text is legible before submitting.</div>
+
+        <!-- Action buttons -->
+        <div class="merc-id-action-btns">
+          <button class="merc-id-btn" onclick="mercIdOpenCamera()">📷 Use Camera</button>
+          <button class="merc-id-btn secondary" onclick="document.getElementById('merc-id-file-input').click()">📁 Upload Image</button>
+          <button class="merc-id-btn secondary" onclick="mercIdClear()" id="merc-id-clear-btn" style="display:none;">✕ Remove</button>
+        </div>
+
+        <!-- Tips -->
+        <div class="merc-id-quality" style="margin-top:14px;">
+          <span>💡</span>
+          <span><strong>Tips for a clear image:</strong> Use good lighting, hold the camera steady, ensure all four corners of the document are visible, and avoid glare from laminated surfaces.</span>
+        </div>
+
       </div>
     </div>
 
@@ -661,9 +878,16 @@
 </div><!-- /merc-wrap -->
 
 <div id="merc-toast">✓ Agreement submitted successfully!</div>
+<div id="merc-toast-sending" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a4f8a;color:white;padding:13px 26px;border-radius:50px;font-weight:700;font-size:0.86rem;box-shadow:0 8px 24px rgba(0,0,0,0.2);transition:transform 0.3s cubic-bezier(.34,1.56,.64,1);z-index:99999;pointer-events:none;">⏳ Sending — please wait...</div>
+<div id="merc-toast-error" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:#dc2626;color:white;padding:13px 26px;border-radius:50px;font-weight:700;font-size:0.86rem;box-shadow:0 8px 24px rgba(0,0,0,0.2);transition:transform 0.3s cubic-bezier(.34,1.56,.64,1);z-index:99999;pointer-events:none;">✕ Send failed — please try again or email daniel@mercury.net.za</div>
 
 <script>
-(function() {
+function mercInit() {
+  // Initialise EmailJS
+  if (typeof emailjs !== 'undefined') {
+    emailjs.init({ publicKey: 'k_FWrndjlpO5QnFB6' });
+  }
+
 // ── Config ──────────────────────────────────────────────────────────────────
 const PRICING = {
   residential: { type:'flat', rate:250 },
@@ -863,6 +1087,8 @@ window.mercClearRepSig  = ()=>pads.rep.clear();
 
 // ── Submit ───────────────────────────────────────────────────────────────────
 window.mercSubmit = function() {
+
+  // ── Validate checkboxes ──────────────────────────────────────────────────
   const tc  = document.getElementById('merc-tc-accept');
   const sop = document.getElementById('merc-sop-accept');
   if (!tc.checked) {
@@ -877,12 +1103,243 @@ window.mercSubmit = function() {
     sop.closest('.merc-accept').scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
-  const toast = document.getElementById('merc-toast');
-  toast.classList.add('show');
-  setTimeout(()=>toast.classList.remove('show'), 3500);
+
+  // ── Helper: get input value by placeholder or id ─────────────────────────
+  function gv(selector) {
+    const el = document.querySelector(selector);
+    return el ? (el.value || '').trim() : '';
+  }
+  function gvp(placeholder) {
+    const el = document.querySelector(`input[placeholder="${placeholder}"], textarea[placeholder="${placeholder}"]`);
+    return el ? (el.value || '').trim() : '';
+  }
+
+  // ── Collect client info ──────────────────────────────────────────────────
+  const firstName   = gvp('e.g. John');
+  const lastName    = gvp('e.g. Smith');
+  const clientName  = (firstName + ' ' + lastName).trim() || 'Not provided';
+  const designation = gvp('e.g. Operations Manager');
+  const company     = gvp('e.g. Acme Properties (Pty) Ltd');
+  const clientEmail = document.querySelector('input[type="email"]')?.value?.trim() || '';
+  const clientPhone = document.querySelector('input[type="tel"]')?.value?.trim() || '';
+  const siteAddress = document.querySelector('textarea')?.value?.trim() || '';
+
+  // ── Monitoring type & pricing ─────────────────────────────────────────────
+  const ptypeEl  = document.querySelector('input[name="merc-ptype"]:checked');
+  const ptypeMap = {residential:'Residential', commercial:'Commercial / Farming', community:'Farming Community'};
+  const monType  = ptypeMap[ptypeEl?.value] || 'Not selected';
+  const channels = document.getElementById('merc-ch-qty')?.value || '0';
+  const monthlyFee  = document.getElementById('merc-sum-monthly')?.textContent?.trim() || '';
+  const ratePerCh   = document.getElementById('merc-sum-rate')?.textContent?.trim() || '';
+  const termEl      = document.querySelector('input[name="merc-term"]:checked');
+  const contractTerm = termEl ? termEl.value : '36';
+  const contractTotal = document.getElementById('merc-sum-contract')?.textContent?.trim() || '';
+
+  // ── Additional services ───────────────────────────────────────────────────
+  const addonNames = {
+    setup:'Once-off Setup Fee', anpr:'ANPR Monitoring',
+    body:'Body Camera Rentals', p2p:'P2P Two-Way Radios',
+    alarm:'Alarm Monitoring (Only)', alarmtied:'Alarm Monitoring (Tied)',
+    smart16:'Smart Box 1-16ch', smart32:'Smart Box 17-32ch'
+  };
+  let addons = [];
+  Object.keys(addonNames).forEach(id => {
+    const chk = document.getElementById('merc-achk-' + id);
+    if (chk?.checked) {
+      const qty = document.getElementById('merc-aqty-' + id)?.value || '1';
+      addons.push(addonNames[id] + (qty > 1 ? ' x' + qty : ''));
+    }
+  });
+  const addonServices = addons.length ? addons.join(', ') : 'None selected';
+
+  // ── SOP ──────────────────────────────────────────────────────────────────
+  const allTextareas = document.querySelectorAll('textarea');
+  const sopNotes     = allTextareas[1]?.value?.trim() || '';
+  const allInputs    = document.querySelectorAll('input[type="text"]');
+  // Primary contact is after the SOP section fields
+  const primaryContact = gvp('Full name') || '';
+  const arProvider     = document.querySelector('input[placeholder="e.g. ADT, Fidelity, Chubb"]')?.value?.trim() || '';
+  const arAccount      = document.querySelector('input[placeholder="Your account number"]')?.value?.trim() || '';
+
+  // ── ID document ──────────────────────────────────────────────────────────
+  const idTypeEl  = document.querySelector('input[name="merc-id-type"]:checked');
+  const idTypeMap = {id_book:'SA ID Book', smart_id:'Smart ID Card', passport:'Passport', other:'Other'};
+  const idDocType = idTypeMap[idTypeEl?.value] || 'Not captured';
+  const idImage   = mercIdImageData || null;  // base64 string or null
+
+  // ── Build email params ────────────────────────────────────────────────────
+  const params = {
+    client_name:     clientName,
+    client_email:    clientEmail || 'Not provided',
+    client_phone:    clientPhone || 'Not provided',
+    client_company:  company     || 'Not provided',
+    designation:     designation || 'Not provided',
+    site_address:    siteAddress || 'Not provided',
+    monitoring_type: monType,
+    channels:        channels,
+    rate_per_channel:ratePerCh,
+    monthly_fee:     monthlyFee,
+    contract_term:   contractTerm + ' months',
+    contract_total:  contractTotal,
+    addon_services:  addonServices,
+    primary_contact: primaryContact || 'Not provided',
+    armed_response:  arProvider ? arProvider + (arAccount ? ' (Acc: ' + arAccount + ')' : '') : 'Not provided',
+    sop_notes:       sopNotes || 'None',
+    id_doc_type:     idDocType,
+    id_image:        idImage ? idImage.substring(0, 200) + '...[image attached]' : 'Not captured',
+    submission_time: new Date().toLocaleString('en-ZA', {timeZone:'Africa/Johannesburg'}),
+    title:           'New Mercury Sign-Up: ' + clientName + ' – ' + monType,
+    email:           clientEmail || 'noreply@mercury.net.za',
+  };
+
+  // ── Show sending state ────────────────────────────────────────────────────
+  const btn = document.querySelector('.merc-btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Sending...'; }
+  const toastSending = document.getElementById('merc-toast-sending');
+  if (toastSending) toastSending.style.transform = 'translateX(-50%) translateY(0)';
+
+  // ── Send via EmailJS ──────────────────────────────────────────────────────
+  emailjs.send('service_qccbvgn', 'template_sucepiq', params)
+    .then(() => {
+      // Success
+      if (toastSending) toastSending.style.transform = 'translateX(-50%) translateY(80px)';
+      const toast = document.getElementById('merc-toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 5000);
+      if (btn) { btn.disabled = false; btn.textContent = '✓ Submitted!'; btn.style.background = '#1db87a'; }
+      // Scroll to top
+      document.querySelector('.merc-wrap')?.scrollIntoView({behavior:'smooth'});
+    })
+    .catch((err) => {
+      // Error
+      if (toastSending) toastSending.style.transform = 'translateX(-50%) translateY(80px)';
+      const toastErr = document.getElementById('merc-toast-error');
+      if (toastErr) {
+        toastErr.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(() => toastErr.style.transform = 'translateX(-50%) translateY(80px)', 6000);
+      }
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit Agreement →'; }
+      console.error('EmailJS error:', err);
+    });
 };
 
+
+// ── ID / PASSPORT CAPTURE ──────────────────────────────────────────────────
+let mercIdStream = null;
+let mercIdImageData = null;
+
+const mercIdDocLabels = {
+  id_book:  'SA ID Book',
+  smart_id: 'Smart ID Card',
+  passport: 'Passport',
+  other:    'Identity Document',
+};
+
+function mercIdTypeChange() {
+  const type = document.querySelector('input[name="merc-id-type"]:checked')?.value || 'id_book';
+  const label = mercIdDocLabels[type] || 'Document';
+  const el = document.getElementById('merc-id-placeholder-text');
+  if (el) el.innerHTML = `Place your <strong>${label}</strong> on a flat surface in good light,<br>then tap a button below to capture or upload.`;
+}
+
+function mercIdOpenCamera() {
+  const constraints = {
+    video: {
+      facingMode: { ideal: 'environment' },
+      width: { ideal: 1920 }, height: { ideal: 1080 }
+    }
+  };
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then(stream => {
+      mercIdStream = stream;
+      const video = document.getElementById('merc-id-video');
+      video.srcObject = stream;
+      document.getElementById('merc-id-placeholder').style.display = 'none';
+      document.getElementById('merc-id-preview').classList.remove('show');
+      document.getElementById('merc-id-camera').classList.add('show');
+    })
+    .catch(err => {
+      // Camera not available — fall back to file upload
+      alert('Camera not available. Please use the Upload button instead.');
+      document.getElementById('merc-id-file-input').click();
+    });
+}
+
+function mercIdStopCamera() {
+  if (mercIdStream) {
+    mercIdStream.getTracks().forEach(t => t.stop());
+    mercIdStream = null;
+  }
+  document.getElementById('merc-id-camera').classList.remove('show');
+  document.getElementById('merc-id-placeholder').style.display = '';
+}
+
+function mercIdCapture() {
+  const video = document.getElementById('merc-id-video');
+  const canvas = document.getElementById('merc-id-canvas');
+  canvas.width  = video.videoWidth  || 1280;
+  canvas.height = video.videoHeight || 720;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  mercIdImageData = canvas.toDataURL('image/jpeg', 0.92);
+  mercIdShowPreview(mercIdImageData);
+  mercIdStopCamera();
+}
+
+function mercIdFileSelected(e) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    mercIdImageData = ev.target.result;
+    mercIdShowPreview(mercIdImageData);
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+}
+
+function mercIdShowPreview(src) {
+  document.getElementById('merc-id-img').src = src;
+  document.getElementById('merc-id-placeholder').style.display = 'none';
+  document.getElementById('merc-id-camera').classList.remove('show');
+  document.getElementById('merc-id-preview').classList.add('show');
+  document.getElementById('merc-id-area').classList.add('has-image');
+  document.getElementById('merc-id-status-ok').style.display = 'flex';
+  document.getElementById('merc-id-status-warn').style.display = 'none';
+  document.getElementById('merc-id-clear-btn').style.display = 'flex';
+}
+
+function mercIdClear() {
+  mercIdImageData = null;
+  document.getElementById('merc-id-img').src = '';
+  document.getElementById('merc-id-preview').classList.remove('show');
+  document.getElementById('merc-id-area').classList.remove('has-image');
+  document.getElementById('merc-id-placeholder').style.display = '';
+  document.getElementById('merc-id-status-ok').style.display = 'none';
+  document.getElementById('merc-id-status-warn').style.display = 'none';
+  document.getElementById('merc-id-clear-btn').style.display = 'none';
+}
+
+window.mercIdOpenCamera  = mercIdOpenCamera;
+window.mercIdStopCamera  = mercIdStopCamera;
+window.mercIdCapture     = mercIdCapture;
+window.mercIdFileSelected= mercIdFileSelected;
+window.mercIdClear       = mercIdClear;
+window.mercIdTypeChange  = mercIdTypeChange;
+
+// Stop camera stream if page is navigated away
+window.addEventListener('beforeunload', () => {
+  if (mercIdStream) mercIdStream.getTracks().forEach(t => t.stop());
+});
+
 // Init
-mercUpdatePricing();
-})();
+  mercUpdatePricing();
+}
+
+// Safe for WordPress - works regardless of where script appears on page
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', mercInit);
+} else {
+  mercInit();
+}
 </script>
