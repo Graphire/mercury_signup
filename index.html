@@ -474,6 +474,7 @@
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
   // EmailJS initialised once DOM ready
   (function(){
@@ -1086,7 +1087,7 @@ window.mercClearSopSig  = ()=>pads.sop.clear();
 window.mercClearRepSig  = ()=>pads.rep.clear();
 
 // ── Submit ───────────────────────────────────────────────────────────────────
-window.mercSubmit = function() {
+window.mercSubmit = async function() {
 
   // ── Validate checkboxes ──────────────────────────────────────────────────
   const tc  = document.getElementById('merc-tc-accept');
@@ -1214,9 +1215,28 @@ window.mercSubmit = function() {
 
   // ── Show sending state ────────────────────────────────────────────────────
   const btn = document.querySelector('.merc-btn-primary');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Sending...'; }
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Capturing form...'; }
   const toastSending = document.getElementById('merc-toast-sending');
   if (toastSending) toastSending.style.transform = 'translateX(-50%) translateY(0)';
+
+  // ── Capture form as image ─────────────────────────────────────────────────
+  try {
+    const formEl = document.querySelector('.merc-wrap');
+    const canvas = await html2canvas(formEl, {
+      scale: 1.2,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      backgroundColor: '#f4f7fb'
+    });
+    const imgDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+    params.form_screenshot = `<img src="${imgDataUrl}" style="max-width:100%;display:block;border:1px solid #ddd;">`;
+
+    if (btn) btn.textContent = '⏳ Sending...';
+  } catch(screenshotErr) {
+    console.warn('Screenshot failed, sending without image:', screenshotErr);
+    params.form_screenshot = '<p><em>Form screenshot could not be generated.</em></p>';
+  }
 
   // ── Send via EmailJS ──────────────────────────────────────────────────────
   emailjs.send('service_qccbvgn', 'template_sucepiq', params)
@@ -1227,7 +1247,6 @@ window.mercSubmit = function() {
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 5000);
       if (btn) { btn.disabled = false; btn.textContent = '✓ Submitted!'; btn.style.background = '#1db87a'; }
-      // Scroll to top
       document.querySelector('.merc-wrap')?.scrollIntoView({behavior:'smooth'});
     })
     .catch((err) => {
