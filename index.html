@@ -1078,9 +1078,13 @@ window.mercClearWitness = ()=>pads.witness.clear();
 window.mercClearSopSig  = ()=>pads.sop.clear();
 window.mercClearRepSig  = ()=>pads.rep.clear();
 
-// ── PDF options ───────────────────────────────────────────────────────────────
-function mercPdfOptions() {
-  return {
+// ── PDF capture helper ────────────────────────────────────────────────────────
+async function mercCapturePdf(outputType) {
+  const formEl = document.querySelector('.merc-wrap');
+  window.scrollTo(0, 0);
+  await new Promise(r => setTimeout(r, 100));
+
+  return await html2pdf().set({
     margin: [10, 10, 10, 10],
     image: { type: 'jpeg', quality: 0.88 },
     html2canvas: {
@@ -1088,11 +1092,23 @@ function mercPdfOptions() {
       useCORS: true,
       allowTaint: true,
       logging: false,
-      windowWidth: 960
+      onclone: (clonedDoc) => {
+        const el = clonedDoc.querySelector('.merc-wrap');
+        if (el) {
+          el.style.width = '960px';
+          el.style.maxWidth = '960px';
+          el.style.margin = '0';
+        }
+        clonedDoc.body.style.width = '960px';
+        clonedDoc.body.style.background = '#f4f7fb';
+        clonedDoc.body.style.margin = '0';
+        clonedDoc.body.style.padding = '0';
+        clonedDoc.body.style.overflow = 'hidden';
+      }
     },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     pagebreak: { mode: ['css', 'legacy'] }
-  };
+  }).from(formEl).outputPdf(outputType);
 }
 
 // ── Submit ───────────────────────────────────────────────────────────────────
@@ -1100,11 +1116,8 @@ window.mercPreviewPdf = async function(btn) {
   const orig = btn.textContent;
   btn.disabled = true;
   btn.textContent = '⏳ Generating...';
-  window.scrollTo(0, 0);
-  await new Promise(r => setTimeout(r, 100));
   try {
-    const url = await html2pdf().set(mercPdfOptions())
-      .from(document.querySelector('.merc-wrap')).outputPdf('bloburl');
+    const url = await mercCapturePdf('bloburl');
     window.open(url, '_blank');
   } catch(e) {
     alert('PDF preview failed: ' + e.message);
@@ -1223,10 +1236,7 @@ window.mercSubmit = async function() {
   // ── Generate PDF of completed form ────────────────────────────────────────
   let pdfDataUri = null;
   try {
-    window.scrollTo(0, 0);
-    await new Promise(r => setTimeout(r, 100));
-    pdfDataUri = await html2pdf().set(mercPdfOptions())
-      .from(document.querySelector('.merc-wrap')).outputPdf('datauristring');
+    pdfDataUri = await mercCapturePdf('datauristring');
   } catch(pdfErr) {
     console.warn('PDF generation failed:', pdfErr);
   }
