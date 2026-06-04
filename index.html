@@ -863,7 +863,7 @@
 
     <div class="merc-btn-row">
       <button class="merc-btn-secondary" onclick="window.print()">🖨 Print / Save PDF</button>
-      <button class="merc-btn-secondary" onclick="mercPreviewPdf(this)">👁 Preview PDF</button>
+      <button class="merc-btn-secondary" onclick="mercPreviewPdf(this)">👁 Preview PDF</button>  <!-- diable after testing -->
       <button class="merc-btn-primary" onclick="mercSubmit()">Submit Agreement →</button>
     </div>
 
@@ -1078,21 +1078,33 @@ window.mercClearWitness = ()=>pads.witness.clear();
 window.mercClearSopSig  = ()=>pads.sop.clear();
 window.mercClearRepSig  = ()=>pads.rep.clear();
 
+// ── PDF options ───────────────────────────────────────────────────────────────
+function mercPdfOptions() {
+  return {
+    margin: [10, 10, 10, 10],
+    image: { type: 'jpeg', quality: 0.88 },
+    html2canvas: {
+      scale: 1.2,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      windowWidth: 960
+    },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['css', 'legacy'] }
+  };
+}
+
 // ── Submit ───────────────────────────────────────────────────────────────────
 window.mercPreviewPdf = async function(btn) {
   const orig = btn.textContent;
   btn.disabled = true;
   btn.textContent = '⏳ Generating...';
   window.scrollTo(0, 0);
-  const formEl = document.querySelector('.merc-wrap');
+  await new Promise(r => setTimeout(r, 100));
   try {
-    const url = await html2pdf().set({
-      margin: [10, 10, 10, 10],
-      image: { type: 'jpeg', quality: 0.88 },
-      html2canvas: { scale: 1.2, useCORS: true, allowTaint: true, logging: false, scrollX: 0, scrollY: 0, windowWidth: formEl.scrollWidth },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] }
-    }).from(formEl).outputPdf('bloburl');
+    const url = await html2pdf().set(mercPdfOptions())
+      .from(document.querySelector('.merc-wrap')).outputPdf('bloburl');
     window.open(url, '_blank');
   } catch(e) {
     alert('PDF preview failed: ' + e.message);
@@ -1212,23 +1224,9 @@ window.mercSubmit = async function() {
   let pdfDataUri = null;
   try {
     window.scrollTo(0, 0);
-    const formEl = document.querySelector('.merc-wrap');
-    pdfDataUri = await html2pdf().set({
-      margin: [10, 10, 10, 10],
-      filename: 'mercury_agreement.pdf',
-      image: { type: 'jpeg', quality: 0.88 },
-      html2canvas: {
-        scale: 1.2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: formEl.scrollWidth
-      },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] }
-    }).from(formEl).outputPdf('datauristring');
+    await new Promise(r => setTimeout(r, 100));
+    pdfDataUri = await html2pdf().set(mercPdfOptions())
+      .from(document.querySelector('.merc-wrap')).outputPdf('datauristring');
   } catch(pdfErr) {
     console.warn('PDF generation failed:', pdfErr);
   }
